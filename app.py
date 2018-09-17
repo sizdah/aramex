@@ -4,6 +4,9 @@ from bs4 import BeautifulSoup
 from time import sleep
 from telegram import Bot
 from datetime import datetime
+from pytz import timezone
+
+format = "%Y-%m-%d %H:%M:%S"
 
 base = "https://www.aramex.com/track/results?mode=0&ShipmentNumber=7860913222"
 
@@ -26,11 +29,17 @@ while True:
 
             if old_content == new_content:
                 print("no change")
-                print(datetime.now())
+                now_gmt = datetime.now(timezone("GMT"))
+                now_asia = now_gmt.astimezone(timezone('Asia/Tehran'))
+                print(now_asia.strftime(format))
             else:
+                now_gmt = datetime.now(timezone("GMT"))
+                now_asia = now_gmt.astimezone(timezone('Asia/Tehran'))
+                print(now_asia.strftime(format))        
+                        
                 bot.send_message(chat_id=id, text=base)
-                bot.send_message(chat_id=id, text=str(datetime.now()))
-                print(datetime.now())
+                bot.send_message(chat_id=id, text=str(now_asia.strftime(format)))
+                        
                 print("change happend")
 
 
