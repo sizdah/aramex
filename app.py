@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 from time import sleep
 from telegram import Bot
+from datatime import datatime
 
 base = "https://www.aramex.com/track/results?mode=0&ShipmentNumber=7860913222"
 catch = "Invalid number / data not currently available"
@@ -27,6 +28,7 @@ while True:
 
             if catch in usd[1].text:
                 print("NOPE")
+                print(datetime.now())
 
             else:
                 bot.send_message(chat_id=id, text=base)
