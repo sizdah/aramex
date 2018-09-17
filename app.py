@@ -3,7 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 from time import sleep
 from telegram import Bot
-from datetime import datatime
+from datetime import datetime
 
 base = "https://www.aramex.com/track/results?mode=0&ShipmentNumber=7860913222"
 catch = "Invalid number / data not currently available"
