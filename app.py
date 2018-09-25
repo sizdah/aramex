@@ -1,48 +1,63 @@
-
-import requests 
+import requests,re
 from bs4 import BeautifulSoup
 from time import sleep
+
 from telegram import Bot
-from datetime import datetime
-from pytz import timezone
 
-format = "%Y-%m-%d %H:%M:%S"
 
-base = "https://www.aramex.com/track/results?mode=0&ShipmentNumber=7860913222"
-
-TOKEN = '590253293:AAHxmKhXGS-o-MFjELhcU_bQ3rbhVc4Hqy8'
+TOKEN = '590253293:AAHxmKhXGS-o-MFjELhcU_bQ3rbhVc4Hqy8' #this is a secret code for accessing my telegram bot
 bot = Bot(TOKEN)
-id = 34015964
-bot.send_message(chat_id=id, text="STARTED")
+id = 381313636 #My telegram ID
+bot.send_message(chat_id=id, text="Night Watch has Started!")
 
-r = requests.get(base)
-old_content = r.content
-sleep(60)
+LINK = "https://ghasedak24.com/search/flight/BND-THR/1397-08-15/1-0-0"
+LINK2= "https://sepehr360.com/fa/flight/b2c/oneway/showB2cFlights?origin=BND&destination=THR,IKA&departureDate=1397-08-15"
+
+def spooky(LINK):
+ try:
+    r = requests.get(LINK)
+    c = r.content
+
+    soup = BeautifulSoup(c, "html.parser")
+
+    usd = soup.find_all("span", {"class": "price"})
+
+    list = []
+
+    for item in usd:
+        mat = re.search(r'\d{3},\d{3}', str(item))
+        mat = mat.group(0)
+        mat = mat.replace(",", "")
+        list.append(int(mat))
+
+    list.sort()
+    return list
+
+ except:
+     pass
+
+
+
+base = spooky(LINK)[0]   # cheapest price so far
+sleep(900)
 
 while True:
+ try:
 
+    if (spooky(LINK)[0] < base ):
 
-            r = requests.get(base)
-            new_content = r.content
+        base = spooky(LINK)[0]
 
+        mess = str(base)+" "+"Is price of Ghasedak24,But i send the Sephr360 link as well which is usually a little bit cheaper than Ghasedak"
 
+        bot.send_message(chat_id=id, text=mess)
+        bot.send_message(chat_id=id, text=str(LINK))
+        bot.send_message(chat_id=id, text=str(LINK2))
 
-            if old_content == new_content:
-                print("no change")
-                now_gmt = datetime.now(timezone("GMT"))
-                now_asia = now_gmt.astimezone(timezone('Asia/Tehran'))
-                print(now_asia.strftime(format))
-            else:
-                now_gmt = datetime.now(timezone("GMT"))
-                now_asia = now_gmt.astimezone(timezone('Asia/Tehran'))
-                print(now_asia.strftime(format))        
-                        
-                bot.send_message(chat_id=id, text=base)
-                bot.send_message(chat_id=id, text=str(now_asia.strftime(format)))
-                        
-                print("change happend")
+    else:
+        pass
 
+    sleep(900)
 
-
-            old_content = new_content
-            sleep(1800)
+ except:
+     pass
